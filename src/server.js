@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
             room.player1.socket = player1;
             room.player2.socket = player2;
 
-            // TODO: send start game
+            io.to(roomId).emit('startGame', getRoomResponse(room));
         }
     });
 
@@ -84,7 +84,7 @@ io.on('connection', (socket) => {
         socket.roomId = roomId;
         room.player2.socket = socket;
 
-        // TODO: send start game
+        io.to(roomId).emit('startGame', getRoomResponse(room));
     });
 
     socket.on('leaveRoom', () => {
@@ -157,6 +157,22 @@ function leaveRoom(socket) {
     socket.roomId = null;
 
     return true;
+}
+
+function getRoomResponse(room) {
+    return {
+        player1: {
+            username: room.player1.socket.username,
+            side: room.player1.side
+        },
+        player2: {
+            username: room.player2.socket.username,
+            side: room.player2.side
+        },
+        board: room.board,
+        currentPlayer: room.currentPlayer,
+        score: room.score
+    };
 }
 
 server.listen(port, function() {
