@@ -58,6 +58,14 @@ $(document).ready(function() {
         $('#createRoomRoomId').text(roomId);
     });
 
+    socket.on('startGame', function(data) {
+        $('#playVsPlayerMenu').hide();
+        $('.modal').hide();
+        
+        $('#gameArea').show();
+        console.log(data);
+    });
+
     $(window).click(function(event) {
         var modal = $('#aiMenuModal');
         if(event.target === modal[0]) {

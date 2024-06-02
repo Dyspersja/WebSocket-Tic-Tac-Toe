@@ -4,6 +4,7 @@ html, body {
     justify-content: center;
     align-items: center;
     height: 100%;
+    width: 100%;
     margin: 0;
 }
 
@@ -41,4 +42,55 @@ html, body {
 
 #createRoomRoomId {
     font-weight: bold;
+}
+
+#gameArea {
+    width: 70%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+#gameBoard {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-gap: 5px;
+    margin-top: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+    border: 1px solid #ccc;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #999;
+    color: white;
+    padding: 20px 40px;
+}
+
+.left-element {
+    flex: 1;
+    text-align: left;
+}
+
+.middle-element {
+    flex: 1;
+    text-align: center;
+}
+
+.right-element {
+    flex: 1;
+    text-align: right;
 }
