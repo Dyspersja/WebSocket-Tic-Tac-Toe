@@ -71,6 +71,17 @@ $(document).ready(function() {
 
         $('#gameArea').show();
         updateGameInfo(data);
+        updateBoard(data.board);
+    });
+
+    socket.on('updateGame', function(data) {
+        updateGameInfo(data);
+        updateBoard(data.board);
+    });
+
+    $('.cell').click(function() {
+        let cell = $(this).data('cell');
+        socket.emit('move', cell);
     });
 
     $(window).click(function(event) {
@@ -93,5 +104,11 @@ $(document).ready(function() {
         $('.middle-left-element').html(isPlayer1Turn ? `<b>${data.player1.side}</b>` : data.player1.side);
         $('.middle-right-element').html(isPlayer1Turn ? data.player2.side : `<b>${data.player2.side}</b>`);
         $('.right-element').html(isPlayer1Turn ? data.player2.username : `<b>${data.player2.username}</b>`);
+    }
+
+    function updateBoard(board) {
+        $('.cell').each(function(index) {
+            $(this).text(board[index]);
+        });
     }
 });
