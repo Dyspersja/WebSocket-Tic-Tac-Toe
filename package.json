@@ -1,0 +1,12 @@
+{
+  "name": "websocket-tic-tac-toe",
+  "version": "1.0.0",
+  "description": "Multiplayer Tic Tac Toe game created using WebSockets.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
