@@ -61,9 +61,9 @@ $(document).ready(function() {
     socket.on('startGame', function(data) {
         $('#playVsPlayerMenu').hide();
         $('.modal').hide();
-        
+
         $('#gameArea').show();
-        console.log(data);
+        updateGameInfo(data);
     });
 
     $(window).click(function(event) {
@@ -76,4 +76,15 @@ $(document).ready(function() {
             modal.hide();
         }
     });
+
+    function updateGameInfo(data) {
+        $('.middle-element').text(`${data.score.player1}:${data.score.draws}:${data.score.player2}`);
+    
+        const isPlayer1Turn = data.currentPlayer === data.player1.side;
+    
+        $('.left-element').html(isPlayer1Turn ? `<b>${data.player1.username}</b>` : data.player1.username);
+        $('.middle-left-element').html(isPlayer1Turn ? `<b>${data.player1.side}</b>` : data.player1.side);
+        $('.middle-right-element').html(isPlayer1Turn ? data.player2.side : `<b>${data.player2.side}</b>`);
+        $('.right-element').html(isPlayer1Turn ? data.player2.username : `<b>${data.player2.username}</b>`);
+    }
 });
