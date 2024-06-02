@@ -1,5 +1,8 @@
 html, body {
     font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100%;
     margin: 0;
 }
@@ -21,5 +24,13 @@ html, body {
     padding: 20px 50px;
     border: 1px solid #888;
     width: fit-content;
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
+
+.mainText {
     text-align: center;
 }

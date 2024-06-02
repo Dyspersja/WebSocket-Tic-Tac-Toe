@@ -13,5 +13,6 @@ $(document).ready(function() {
         
         socket.emit('setUsername', username);
         $('#loginModal').hide();
+        $('#menu').show();
     });
 });
