@@ -31,7 +31,7 @@ io.on('connection', (socket) => {
         room.player2.socket = { mode: 'ai'};
         room.player2.socket.username = difficulty + ' AI';
         room.player2.difficulty = difficulty;
-        
+
         io.to(roomId).emit('startGame', getRoomResponse(room));
     });
     
@@ -266,7 +266,9 @@ function makeAIMove(roomId, room, difficulty) {
             break;
     }
 
-    makeMove(roomId, room, cell);
+    setTimeout(() => {
+        makeMove(roomId, room, cell);
+    }, 500);
 }
 
 function getAIMove(board, percent) {
