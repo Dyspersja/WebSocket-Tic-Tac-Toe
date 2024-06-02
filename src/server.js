@@ -50,9 +50,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('leaveQueue', () => {
-        let index = queue.indexOf(socket);
-        if (index !== -1) {
-            queue.splice(index, 1);
+        if (leaveQueue(socket)) {
             socket.emit('queueStatus', 'You have left the queue.');
         } else {
             socket.emit('error', 'You are not in the queue.');
@@ -88,10 +86,19 @@ io.on('connection', (socket) => {
 
         // TODO: send start game
     });
+
+    socket.on('leaveRoom', () => {
+        if (leaveRoom(socket)) {
+            socket.emit('roomLeft', 'You left the room.');
+        } else {
+            socket.emit('error', 'You are not in any room.');
+        }
+    });
     
-    // socket.on('leaveRoom', () => {});
-    
-    // socket.on('disconnect', () => {});
+    socket.on('disconnect', () => {
+        leaveQueue(socket);
+        leaveRoom(socket);
+    });
 });
 
 function generateId() {
@@ -115,6 +122,41 @@ function createRoom() {
 
     rooms.set(roomId, room);
     return roomId;
+}
+
+function leaveQueue(socket) {
+    let index = queue.indexOf(socket);
+    if (index !== -1) {
+        queue.splice(index, 1);
+        return true;
+    }
+    return false;
+}
+
+function leaveRoom(socket) {
+    let roomId = socket.roomId;
+    if (!roomId) {
+        return false;
+    }
+
+    let room = rooms.get(roomId);
+    if (!room) {
+        return false;
+    }
+
+    let opponent = room.player1.socket === socket 
+        ? room.player2.socket 
+        : room.player1.socket;
+
+    if (opponent) {
+        opponent.leave(roomId);
+        opponent.emit('opponentLeft', 'Your opponent has left the game.');
+        opponent.roomId = null;
+    }
+    rooms.delete(roomId);
+    socket.roomId = null;
+
+    return true;
 }
 
 server.listen(port, function() {
