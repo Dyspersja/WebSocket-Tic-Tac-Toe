@@ -31,7 +31,7 @@ io.on('connection', (socket) => {
         room.player2.socket = { mode: 'ai'};
         room.player2.socket.username = difficulty + ' AI';
         room.player2.difficulty = difficulty;
-  
+        
         io.to(roomId).emit('startGame', getRoomResponse(room));
     });
     
@@ -139,7 +139,7 @@ io.on('connection', (socket) => {
 
         makeMove(roomId, room, cell);
         if (room.player2.socket.mode === 'ai') {
-            makeAIMove(roomId, room);
+            makeAIMove(roomId, room, room.player2.difficulty);
         }
     });
     
@@ -165,9 +165,11 @@ io.on('connection', (socket) => {
     
         if (opponent) {
             io.to(roomId).emit('gameClosed');
-            opponent.leave(roomId);
-            opponent.emit('opponentLeft', 'Your opponent has left the game.');
-            opponent.roomId = null;
+            if (opponent.mode !== 'ai') {
+                opponent.leave(roomId);
+                opponent.emit('opponentLeft', 'Your opponent has left the game.');
+                opponent.roomId = null;
+            }
         }
         rooms.delete(roomId);
         socket.roomId = null;
@@ -245,9 +247,44 @@ function checkDraw(board) {
     return board.every(cell => cell !== '');
 }
 
-function makeAIMove(roomId, room) {    
-    let cell = findBestMove(room.board);    
+function makeAIMove(roomId, room, difficulty) {    
+    let cell;
+
+    switch(difficulty) {
+        case 'easy':
+            cell = getAIMove(room.board, 0.5);
+            break;
+        case 'medium':
+            cell = getAIMove(room.board, 0.7);
+            break;
+        case 'hard':
+            cell = getAIMove(room.board, 0.8);
+            break;
+        case 'impossible':
+        default:
+            cell = findBestMove(room.board);
+            break;
+    }
+
     makeMove(roomId, room, cell);
+}
+
+function getAIMove(board, percent) {
+    if (Math.random() > percent) {
+        return randomMove(board);
+    } else {
+        return findBestMove(board);
+    }
+}
+
+function randomMove(board) {
+    let availableMoves = [];
+    for (let i = 0; i < board.length; i++) {
+        if (board[i] === '') {
+            availableMoves.push(i);
+        }
+    }
+    return availableMoves[Math.floor(Math.random() * availableMoves.length)];
 }
 
 function findBestMove(board, maxDepth) {
