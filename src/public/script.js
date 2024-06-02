@@ -2,6 +2,8 @@ $(document).ready(function() {
     let socket = io();
     let username;
 
+    let closedGame = false;
+
     $('#loginForm').submit(function(event) {
         event.preventDefault();
         
@@ -77,6 +79,33 @@ $(document).ready(function() {
     socket.on('updateGame', function(data) {
         updateGameInfo(data);
         updateBoard(data.board);
+    });
+
+    socket.on('gameOver', function(winner) {
+        let message = winner === 'draw' ? 'Game is a draw!' : `Player ${winner} wins!`;
+        $('#gameWinner').text(message);
+        $('#afterGameModal').show();
+    });
+
+    socket.on('gameClosed', function() {
+        if (!closedGame) {
+            alert('Opponent left the game');
+        } else {
+            closedGame = false;
+        }
+
+        $('.modal').hide();
+        $('#gameArea').hide();
+        $('#menu').show();
+    });
+
+    $('#continueGameButton').click(function() {
+        $('#afterGameModal').hide();
+    });
+
+    $('#leaveGameButton').click(function() {
+        closedGame = true;
+        socket.emit('leaveRoom');
     });
 
     $('.cell').click(function() {

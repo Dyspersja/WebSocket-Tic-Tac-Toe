@@ -124,7 +124,6 @@ io.on('connection', (socket) => {
 
         room.board[cell] = room.currentPlayer;
         room.currentPlayer = room.currentPlayer === 'X' ? 'O' : 'X';
-        io.to(roomId).emit('updateGame', getRoomResponse(room));
 
         let winner = checkWinner(room.board);
         if (winner) {
@@ -133,17 +132,49 @@ io.on('connection', (socket) => {
             } else {
                 room.score.player2++;
             }
+            room.board = Array(9).fill('');
             io.to(roomId).emit('gameOver', winner);
         } else if (checkDraw(room.board)) {
             room.score.draws++;
+            room.board = Array(9).fill('');
             io.to(roomId).emit('gameOver', 'draw');
         }
+
+        io.to(roomId).emit('updateGame', getRoomResponse(room));
     });
     
     socket.on('disconnect', () => {
         leaveQueue(socket);
         leaveRoom(socket);
     });
+
+    function leaveRoom(socket) {
+        let roomId = socket.roomId;
+        if (!roomId) {
+            return false;
+        }
+    
+        let room = rooms.get(roomId);
+        if (!room) {
+            return false;
+        }
+
+        io.to(roomId).emit('gameClosed');
+
+        let opponent = room.player1.socket === socket 
+            ? room.player2.socket 
+            : room.player1.socket;
+    
+        if (opponent) {
+            opponent.leave(roomId);
+            opponent.emit('opponentLeft', 'Your opponent has left the game.');
+            opponent.roomId = null;
+        }
+        rooms.delete(roomId);
+        socket.roomId = null;
+
+        return true;
+    }
 });
 
 function generateId() {
@@ -176,32 +207,6 @@ function leaveQueue(socket) {
         return true;
     }
     return false;
-}
-
-function leaveRoom(socket) {
-    let roomId = socket.roomId;
-    if (!roomId) {
-        return false;
-    }
-
-    let room = rooms.get(roomId);
-    if (!room) {
-        return false;
-    }
-
-    let opponent = room.player1.socket === socket 
-        ? room.player2.socket 
-        : room.player1.socket;
-
-    if (opponent) {
-        opponent.leave(roomId);
-        opponent.emit('opponentLeft', 'Your opponent has left the game.');
-        opponent.roomId = null;
-    }
-    rooms.delete(roomId);
-    socket.roomId = null;
-
-    return true;
 }
 
 function getRoomResponse(room) {
