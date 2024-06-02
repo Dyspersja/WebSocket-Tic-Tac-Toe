@@ -95,7 +95,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('move', (data) => {
+    socket.on('move', (cell) => {
         let roomId = socket.roomId;
         if (!roomId) {
             socket.emit('error', 'You are not in any room.');
@@ -108,22 +108,22 @@ io.on('connection', (socket) => {
             return;
         }
 
-        if (room.player1.socket !== socket && room.player2.socket !== socket) {
-            socket.emit('error', 'You are not a player in this room.');
-            return;
-        }
+        let currentPlayerSocket = room.player1.side === room.currentPlayer 
+            ? room.player1.socket
+            : room.player2.socket;
 
-        if (room.currentPlayer !== data.side) {
+        if (currentPlayerSocket !== socket) {
             socket.emit('error', 'It is not your turn.');
             return;
         }
 
-        if (room.board[data.cell] !== '') {
+        if (room.board[cell] !== '') {
             socket.emit('error', 'Cell is already occupied.');
             return;
         }
 
-        room.board[data.cell] = data.side;
+        room.board[cell] = room.currentPlayer;
+        room.currentPlayer = room.currentPlayer === 'X' ? 'O' : 'X';
         io.to(roomId).emit('updateGame', getRoomResponse(room));
 
         let winner = checkWinner(room.board);
@@ -137,8 +137,6 @@ io.on('connection', (socket) => {
         } else if (checkDraw(room.board)) {
             room.score.draws++;
             io.to(roomId).emit('gameOver', 'draw');
-        } else {
-            room.currentPlayer = room.currentPlayer === 'X' ? 'O' : 'X';
         }
     });
     
