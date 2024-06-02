@@ -67,8 +67,12 @@ html, body {
     justify-content: center;
     align-items: center;
     font-size: 2em;
-    cursor: pointer;
     border: 1px solid #ccc;
+}
+
+.cell:hover {
+    cursor: pointer;
+    background-color: #eee;
 }
 
 .top-bar {
