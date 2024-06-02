@@ -59,8 +59,35 @@ io.on('connection', (socket) => {
         }
     });
     
-    // socket.on('createRoom', () => {});
-    // socket.on('joinRoom', (roomId) => {});
+    socket.on('createRoom', () => {
+        let roomId = createRoom();
+        const room = rooms.get(roomId);
+
+        socket.join(roomId);
+        socket.roomId = roomId;
+        room.player1.socket = socket;
+
+        socket.emit('roomCreated', roomId);
+    });
+
+    socket.on('joinRoom', (roomId) => {
+        let room = rooms.get(roomId);
+        if (!room) {
+            socket.emit('error', 'Room does not exist.');
+            return;
+        }
+
+        if (room.player2.socket) {
+            socket.emit('error', 'Room is already full.');
+            return;
+        }
+
+        socket.join(roomId);
+        socket.roomId = roomId;
+        room.player2.socket = socket;
+
+        // TODO: send start game
+    });
     
     // socket.on('leaveRoom', () => {});
     
