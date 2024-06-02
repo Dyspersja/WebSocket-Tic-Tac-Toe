@@ -137,25 +137,10 @@ io.on('connection', (socket) => {
             return;
         }
 
-        room.board[cell] = room.currentPlayer;
-        room.currentPlayer = room.currentPlayer === 'X' ? 'O' : 'X';
-
-        let winner = checkWinner(room.board);
-        if (winner) {
-            if (room.player1.side === winner) {
-                room.score.player1++;
-            } else {
-                room.score.player2++;
-            }
-            room.board = Array(9).fill('');
-            io.to(roomId).emit('gameOver', winner);
-        } else if (checkDraw(room.board)) {
-            room.score.draws++;
-            room.board = Array(9).fill('');
-            io.to(roomId).emit('gameOver', 'draw');
+        makeMove(roomId, room, cell);
+        if (room.player2.socket.mode === 'ai') {
+            makeAIMove(roomId, room);
         }
-
-        io.to(roomId).emit('updateGame', getRoomResponse(room));
     });
     
     socket.on('disconnect', () => {
@@ -258,6 +243,34 @@ function checkWinner(board) {
 
 function checkDraw(board) {
     return board.every(cell => cell !== '');
+}
+
+function makeAIMove(roomId, room) {
+    // TODO: Replace with real AI logic
+    const firstPossibleMove = room.board.findIndex(value => value === '');
+    makeMove(roomId, room, firstPossibleMove);
+}
+
+function makeMove(roomId, room, cell) {
+    room.board[cell] = room.currentPlayer;
+    room.currentPlayer = room.currentPlayer === 'X' ? 'O' : 'X';
+
+    let winner = checkWinner(room.board);
+    if (winner) {
+        if (room.player1.side === winner) {
+            room.score.player1++;
+        } else {
+            room.score.player2++;
+        }
+        room.board = Array(9).fill('');
+        io.to(roomId).emit('gameOver', winner);
+    } else if (checkDraw(room.board)) {
+        room.score.draws++;
+        room.board = Array(9).fill('');
+        io.to(roomId).emit('gameOver', 'draw');
+    }
+
+    io.to(roomId).emit('updateGame', getRoomResponse(room));
 }
 
 server.listen(port, function() {
