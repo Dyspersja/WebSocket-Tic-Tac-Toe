@@ -159,13 +159,12 @@ io.on('connection', (socket) => {
             return false;
         }
 
-        io.to(roomId).emit('gameClosed');
-
         let opponent = room.player1.socket === socket 
             ? room.player2.socket 
             : room.player1.socket;
     
         if (opponent) {
+            io.to(roomId).emit('gameClosed');
             opponent.leave(roomId);
             opponent.emit('opponentLeft', 'Your opponent has left the game.');
             opponent.roomId = null;
