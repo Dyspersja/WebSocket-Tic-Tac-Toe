@@ -245,10 +245,58 @@ function checkDraw(board) {
     return board.every(cell => cell !== '');
 }
 
-function makeAIMove(roomId, room) {
-    // TODO: Replace with real AI logic
-    const firstPossibleMove = room.board.findIndex(value => value === '');
-    makeMove(roomId, room, firstPossibleMove);
+function makeAIMove(roomId, room) {    
+    let cell = findBestMove(room.board);    
+    makeMove(roomId, room, cell);
+}
+
+function findBestMove(board, maxDepth) {
+    let bestEvaluation = -Infinity;    
+    let bestMove = -1;
+
+    for (let i = 0; i < board.length; i++) {
+        if (board[i] === '') {
+            board[i] = 'O';
+            let evaluation = minimax(board, 0, false, maxDepth);
+            board[i] = '';
+            if (evaluation > bestEvaluation) {
+                bestEvaluation = evaluation;
+                bestMove = i;
+            }
+        }
+    }
+    return bestMove;
+}
+
+function minimax(board, depth, isMaximizing, maxDepth) {
+    let winner = checkWinner(board);
+    if (winner === 'O') return 1;
+    if (winner === 'X') return -1;
+    if (checkDraw(board) || depth === maxDepth) return 0;
+
+    if (isMaximizing) {
+        let maxEvaluation = -Infinity;
+        for (let i = 0; i < board.length; i++) {
+            if (board[i] === '') {
+                board[i] = 'O';
+                let evaluation = minimax(board, depth + 1, false, maxDepth);
+                board[i] = '';
+                maxEvaluation = Math.max(maxEvaluation, evaluation);
+            }
+        }
+        return maxEvaluation;
+    } else {
+        let minEvaluation = Infinity;
+        for (let i = 0; i < board.length; i++) {
+            if (board[i] === '') {
+                board[i] = 'X';
+                let evaluation = minimax(board, depth + 1, true, maxDepth);
+                board[i] = '';
+                minEvaluation = Math.min(minEvaluation, evaluation);
+            }
+        }
+        return minEvaluation;
+    }
 }
 
 function makeMove(roomId, room, cell) {
