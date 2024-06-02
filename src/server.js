@@ -19,6 +19,21 @@ io.on('connection', (socket) => {
     socket.on('setUsername', (username) => {
         socket.username = username;
     });
+
+    socket.on('playVsAI', (difficulty) => {
+        let roomId = createRoom();
+        const room = rooms.get(roomId);
+
+        socket.join(roomId);
+        socket.roomId = roomId;
+        room.player1.socket = socket;
+
+        room.player2.socket = { mode: 'ai'};
+        room.player2.socket.username = difficulty + ' AI';
+        room.player2.difficulty = difficulty;
+  
+        io.to(roomId).emit('startGame', getRoomResponse(room));
+    });
     
     socket.on('joinQueue', () => {
         if (queue.includes(socket)) {
