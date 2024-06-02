@@ -13,8 +13,10 @@ const io = Server(server);
 io.on('connection', (socket) => {
     console.log('new user connected');
 
-    // socket.on('setUsername', (username) => {});
-
+    socket.on('setUsername', (username) => {
+        socket.username = username;
+    });
+    
     // socket.on('joinQueue', () => {});
     // socket.on('leaveQueue', () => {});
 
