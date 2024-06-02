@@ -12,6 +12,18 @@ const io = Server(server);
 
 io.on('connection', (socket) => {
     console.log('new user connected');
+
+    // socket.on('setUsername', (username) => {});
+
+    // socket.on('joinQueue', () => {});
+    // socket.on('leaveQueue', () => {});
+
+    // socket.on('createRoom', () => {});
+    // socket.on('joinRoom', (roomId) => {});
+    
+    // socket.on('leaveRoom', () => {});
+    
+    // socket.on('disconnect', () => {});
 });
 
 server.listen(port, function() {
