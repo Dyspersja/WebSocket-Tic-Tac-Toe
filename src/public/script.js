@@ -30,6 +30,20 @@ $(document).ready(function() {
         $('#menu').show();
     });
 
+    $('#createRoomButton').click(function() {
+        $('#createRoomModal').show();
+        socket.emit('createRoom');
+    });
+
+    $('#createRoomCancelButton').click(function() {
+        $('#createRoomModal').hide();
+        socket.emit('leaveRoom');
+    });
+
+    socket.on('roomCreated', function(roomId) {
+        $('#createRoomRoomId').text(roomId);
+    });
+
     $(window).click(function(event) {
         var modal = $('#aiMenuModal');
         if(event.target === modal[0]) {

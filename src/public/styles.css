@@ -38,3 +38,7 @@ html, body {
 #backButton {
     margin-right: 10px;
 }
+
+#createRoomRoomId {
+    font-weight: bold;
+}
