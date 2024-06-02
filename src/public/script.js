@@ -54,6 +54,13 @@ $(document).ready(function() {
         $('#joinRoomModal').show();
     });
 
+    $('#connectToRoomButton').click(function() {
+        roomId = $('#roomIdInput').val();
+        if (roomId) {
+            socket.emit('joinRoom', roomId);
+        }
+    });
+
     socket.on('roomCreated', function(roomId) {
         $('#createRoomRoomId').text(roomId);
     });
