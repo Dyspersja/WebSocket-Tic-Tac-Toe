@@ -50,12 +50,20 @@ $(document).ready(function() {
         socket.emit('leaveRoom');
     });
 
+    $('#joinRoomButton').click(function() {
+        $('#joinRoomModal').show();
+    });
+
     socket.on('roomCreated', function(roomId) {
         $('#createRoomRoomId').text(roomId);
     });
 
     $(window).click(function(event) {
         var modal = $('#aiMenuModal');
+        if(event.target === modal[0]) {
+            modal.hide();
+        }
+        var modal = $('#joinRoomModal');
         if(event.target === modal[0]) {
             modal.hide();
         }
