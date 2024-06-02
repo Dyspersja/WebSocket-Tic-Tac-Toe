@@ -30,6 +30,16 @@ $(document).ready(function() {
         $('#menu').show();
     });
 
+    $('#joinQueueButton').click(function() {
+        $('#queueModal').show();
+        socket.emit('joinQueue');
+    });
+
+    $('#queueLeaveButton').click(function() {
+        $('#queueModal').hide();
+        socket.emit('leaveQueue');
+    });
+
     $('#createRoomButton').click(function() {
         $('#createRoomModal').show();
         socket.emit('createRoom');
