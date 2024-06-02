@@ -34,3 +34,7 @@ html, body {
 .mainText {
     text-align: center;
 }
+
+#backButton {
+    margin-right: 10px;
+}

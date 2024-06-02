@@ -20,6 +20,16 @@ $(document).ready(function() {
         $('#aiMenuModal').show();
     });
 
+    $('#playVsPlayerButton').click(function() {
+        $('#menu').hide();
+        $('#playVsPlayerMenu').show();
+    });
+
+    $('#backButton').click(function() {
+        $('#playVsPlayerMenu').hide();
+        $('#menu').show();
+    });
+
     $(window).click(function(event) {
         var modal = $('#aiMenuModal');
         if(event.target === modal[0]) {
