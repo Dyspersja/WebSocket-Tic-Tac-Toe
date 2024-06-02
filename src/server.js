@@ -10,6 +10,8 @@ const port = 8000;
 const server = http.createServer(app);
 const io = Server(server);
 
+let queue = [];
+
 io.on('connection', (socket) => {
     console.log('new user connected');
 
@@ -17,9 +19,26 @@ io.on('connection', (socket) => {
         socket.username = username;
     });
     
-    // socket.on('joinQueue', () => {});
-    // socket.on('leaveQueue', () => {});
+    socket.on('joinQueue', () => {
+        if (queue.includes(socket)) {
+            socket.emit('error', 'You are already in the queue.');
+            return;
+        }
 
+        queue.push(socket);
+        socket.emit('queueStatus', 'You have joined the queue.');
+    });
+
+    socket.on('leaveQueue', () => {
+        let index = queue.indexOf(socket);
+        if (index !== -1) {
+            queue.splice(index, 1);
+            socket.emit('queueStatus', 'You have left the queue.');
+        } else {
+            socket.emit('error', 'You are not in the queue.');
+        }
+    });
+    
     // socket.on('createRoom', () => {});
     // socket.on('joinRoom', (roomId) => {});
     
