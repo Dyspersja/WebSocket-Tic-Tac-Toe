@@ -41,14 +41,16 @@ npm start
 Now that the application is up and running, you can navigate to [http://localhost:8000](http://localhost:8000) to view the application and start playing!  
 To test real-time communication between players, you can open multiple browser tabs and simulate multiple players.
 
-## Screens
+## Screenshots
 
 The application was tested on mobile devices and it works great.
 
-![441940134_401508686216786_7016215320289169597_n](https://github.com/Dyspersja/WebSocket-Tic-Tac-Toe/assets/146620220/f32165f4-072d-4dc9-828f-a5bb81f95eb3)
+![image](https://github.com/Dyspersja/WebSocket-Tic-Tac-Toe/assets/146620220/f985aebd-2357-4b83-9235-ba39680a6c6e)
+
+<!-- ![441940134_401508686216786_7016215320289169597_n](https://github.com/Dyspersja/WebSocket-Tic-Tac-Toe/assets/146620220/f32165f4-072d-4dc9-828f-a5bb81f95eb3)
 ![441951106_3258923671082964_5022497232259989886_n](https://github.com/Dyspersja/WebSocket-Tic-Tac-Toe/assets/146620220/3bb12a6b-0252-4578-8678-d4579d02fb03)
 ![436621764_1476467209910883_6953463764252780924_n](https://github.com/Dyspersja/WebSocket-Tic-Tac-Toe/assets/146620220/e13474ab-bffb-417f-8179-eb9331573e35)
-![441945401_422688150678714_7475231291675995068_n](https://github.com/Dyspersja/WebSocket-Tic-Tac-Toe/assets/146620220/ad754f6d-198b-4fbe-b102-04810a7787e4)
+![441945401_422688150678714_7475231291675995068_n](https://github.com/Dyspersja/WebSocket-Tic-Tac-Toe/assets/146620220/ad754f6d-198b-4fbe-b102-04810a7787e4) -->
 
 Of course, application also works in standard computer web browsers.
 
