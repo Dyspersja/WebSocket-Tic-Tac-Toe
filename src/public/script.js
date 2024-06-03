@@ -1,14 +1,13 @@
 $(document).ready(function() {
     let socket = io();
-    let username;
-
     let closedGame = false;
     let isSpectating = false;
 
+    // Selecting username
     $('#loginForm').submit(function(event) {
         event.preventDefault();
         
-        username = $('#username').val().trim();
+        let username = $('#username').val().trim();
         if (username === "") {
             alert('Username cannot be empty!');
             return;
@@ -19,6 +18,28 @@ $(document).ready(function() {
         $('#menu').show();
     });
 
+    // Starting vs AI games
+    $('#playVsAIButton').click(function() {
+        $('#aiMenuModal').show();
+    });
+
+    $('#easyDifficulty').click(function() {
+        socket.emit('playVsAI', 'easy');        
+    });
+
+    $('#mediumDifficulty').click(function() {
+        socket.emit('playVsAI', 'medium');        
+    });
+
+    $('#hardDifficulty').click(function() {
+        socket.emit('playVsAI', 'hard');        
+    });
+
+    $('#imposibleDifficulty').click(function() {
+        socket.emit('playVsAI', 'imposible');        
+    });
+
+    // Spectate
     $('#spectateButton').click(function() {
         socket.emit('spectate');
     });
@@ -56,26 +77,7 @@ $(document).ready(function() {
         updateBoard(data.board);
     });
 
-    $('#playVsAIButton').click(function() {
-        $('#aiMenuModal').show();
-    });
-
-    $('#easyDifficulty').click(function() {
-        socket.emit('playVsAI', 'easy');        
-    });
-
-    $('#mediumDifficulty').click(function() {
-        socket.emit('playVsAI', 'medium');        
-    });
-
-    $('#hardDifficulty').click(function() {
-        socket.emit('playVsAI', 'hard');        
-    });
-
-    $('#imposibleDifficulty').click(function() {
-        socket.emit('playVsAI', 'imposible');        
-    });
-
+    // Starting vs Player game
     $('#playVsPlayerButton').click(function() {
         $('#menu').hide();
         $('#playVsPlayerMenu').show();
@@ -86,6 +88,7 @@ $(document).ready(function() {
         $('#menu').show();
     });
 
+    // Queue
     $('#joinQueueButton').click(function() {
         $('#queueModal').show();
         socket.emit('joinQueue');
@@ -96,6 +99,7 @@ $(document).ready(function() {
         socket.emit('leaveQueue');
     });
 
+    // Create / Join room
     $('#createRoomButton').click(function() {
         $('#createRoomModal').show();
         socket.emit('createRoom');
@@ -121,6 +125,7 @@ $(document).ready(function() {
         $('#createRoomRoomId').text(roomId);
     });
 
+    // Game room state 
     socket.on('startGame', function(data) {
         $('#menu').hide();
         $('#playVsPlayerMenu').hide();
@@ -154,6 +159,7 @@ $(document).ready(function() {
         $('#menu').show();
     });
 
+    // Postgame window
     $('#continueGameButton').click(function() {
         $('#afterGameModal').hide();
     });
@@ -168,11 +174,7 @@ $(document).ready(function() {
         }
     });
 
-    $('.cell').click(function() {
-        let cell = $(this).data('cell');
-        socket.emit('move', cell);
-    });
-
+    // Closing modal windows
     $(window).click(function(event) {
         var modal = $('#aiMenuModal');
         if(event.target === modal[0]) {
@@ -186,6 +188,12 @@ $(document).ready(function() {
         if(event.target === modal[0]) {
             modal.hide();
         }
+    });
+
+    // Game board
+    $('.cell').click(function() {
+        let cell = $(this).data('cell');
+        socket.emit('move', cell);
     });
 
     function updateGameInfo(data) {
