@@ -3,6 +3,7 @@ $(document).ready(function() {
     let username;
 
     let closedGame = false;
+    let isSpectating = false;
 
     $('#loginForm').submit(function(event) {
         event.preventDefault();
@@ -16,6 +17,43 @@ $(document).ready(function() {
         socket.emit('setUsername', username);
         $('#loginModal').hide();
         $('#menu').show();
+    });
+
+    $('#spectateButton').click(function() {
+        socket.emit('spectate');
+    });
+
+    socket.on('availableRooms', function(data) {
+        var roomList = $('#spectateRooms');
+        roomList.empty();
+
+        data.forEach(function(room) {
+            var text = room.players.join(' vs ');
+            var roomItem = $('<div></div>')
+                .text(text)
+                .addClass('roomItem')
+                .attr('data-room-id', room.roomId);
+            
+            roomList.append(roomItem);
+        });
+
+        $('#spectateModal').show();
+        
+        $('.roomItem').click(function() {
+            var roomId = $(this).data('room-id');
+            socket.emit('spectateRoom', roomId);
+        });
+    });
+
+    socket.on('startSpectating', function(data) {
+        isSpectating = true;
+
+        $('#menu').hide();
+        $('.modal').hide();
+
+        $('#gameArea').show();
+        updateGameInfo(data);
+        updateBoard(data.board);
     });
 
     $('#playVsAIButton').click(function() {
@@ -122,7 +160,12 @@ $(document).ready(function() {
 
     $('#leaveGameButton').click(function() {
         closedGame = true;
-        socket.emit('leaveRoom');
+
+        if (!isSpectating) {
+            socket.emit('leaveRoom');
+        } else {
+            socket.emit('stopSpectating');
+        }
     });
 
     $('.cell').click(function() {
@@ -136,6 +179,10 @@ $(document).ready(function() {
             modal.hide();
         }
         var modal = $('#joinRoomModal');
+        if(event.target === modal[0]) {
+            modal.hide();
+        }
+        var modal = $('#spectateModal');
         if(event.target === modal[0]) {
             modal.hide();
         }

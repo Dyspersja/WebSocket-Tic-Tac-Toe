@@ -14,10 +14,42 @@ let queue = [];
 let rooms = new Map();
 
 io.on('connection', (socket) => {
-    console.log('new user connected');
 
     socket.on('setUsername', (username) => {
         socket.username = username;
+    });
+
+    socket.on('spectate', () => {
+        let spectateRooms = [];
+        rooms.forEach((room, roomId) => {
+            if (room.player2.socket) {
+                spectateRooms.push({ roomId, players: [room.player1.socket.username, room.player2.socket.username] });
+            }
+        });
+    
+        socket.emit('availableRooms', spectateRooms);
+    });
+    
+    socket.on('spectateRoom', (roomId) => {
+        roomId = roomId.toString();
+
+        let room = rooms.get(roomId);
+        if (!room) {
+            socket.emit('error', 'Room does not exist.');
+            return;
+        }
+        socket.join(roomId);
+        socket.spectateRoomId = roomId;
+        socket.emit('startSpectating', getRoomResponse(room));
+    });
+
+    socket.on('stopSpectating', () => {
+        let roomId = socket.spectateRoomId;
+        if (roomId) {
+            socket.leave(roomId);
+        };
+        socket.spectateRoomId = null;
+        socket.emit('gameClosed');
     });
 
     socket.on('playVsAI', (difficulty) => {
