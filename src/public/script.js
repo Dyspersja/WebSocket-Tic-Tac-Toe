@@ -1,7 +1,11 @@
 $(document).ready(function() {
     let socket = io();
     let closedGame = false;
-    let isSpectating = false;
+
+    // Error alert
+    socket.on('error', function(data) {
+        alert(data);
+    });
 
     // Selecting username
     $('#loginForm').submit(function(event) {
@@ -15,28 +19,7 @@ $(document).ready(function() {
         
         socket.emit('setUsername', username);
         $('#loginModal').hide();
-        $('#menu').show();
-    });
-
-    // Starting vs AI games
-    $('#playVsAIButton').click(function() {
-        $('#aiMenuModal').show();
-    });
-
-    $('#easyDifficulty').click(function() {
-        socket.emit('playVsAI', 'easy');        
-    });
-
-    $('#mediumDifficulty').click(function() {
-        socket.emit('playVsAI', 'medium');        
-    });
-
-    $('#hardDifficulty').click(function() {
-        socket.emit('playVsAI', 'hard');        
-    });
-
-    $('#imposibleDifficulty').click(function() {
-        socket.emit('playVsAI', 'imposible');        
+        $('#mainMenu').show();
     });
 
     // Spectate
@@ -66,42 +49,57 @@ $(document).ready(function() {
         });
     });
 
-    socket.on('startSpectating', function(data) {
-        isSpectating = true;
+    // Starting vs AI games
+    $('#playVsAIButton').click(function() {
+        $('#aiMenuModal').show();
+    });
 
-        $('#menu').hide();
-        $('.modal').hide();
+    $('#easyDifficulty').click(function() {
+        socket.emit('playVsAI', 'easy');        
+    });
 
-        $('#gameArea').show();
-        updateGameInfo(data);
-        updateBoard(data.board);
+    $('#mediumDifficulty').click(function() {
+        socket.emit('playVsAI', 'medium');        
+    });
+
+    $('#hardDifficulty').click(function() {
+        socket.emit('playVsAI', 'hard');        
+    });
+
+    $('#imposibleDifficulty').click(function() {
+        socket.emit('playVsAI', 'imposible');        
     });
 
     // Starting vs Player game
     $('#playVsPlayerButton').click(function() {
-        $('#menu').hide();
+        $('#mainMenu').hide();
         $('#playVsPlayerMenu').show();
     });
 
     $('#backButton').click(function() {
         $('#playVsPlayerMenu').hide();
-        $('#menu').show();
+        $('#mainMenu').show();
     });
 
     // Queue
     $('#joinQueueButton').click(function() {
-        $('#queueModal').show();
         socket.emit('joinQueue');
     });
 
     $('#queueLeaveButton').click(function() {
-        $('#queueModal').hide();
         socket.emit('leaveQueue');
+    });
+
+    socket.on('joinedQueue', function() {
+        $('#queueModal').show();
+    });
+    
+    socket.on('leftQueue', function() {
+        $('#queueModal').hide();
     });
 
     // Create / Join room
     $('#createRoomButton').click(function() {
-        $('#createRoomModal').show();
         socket.emit('createRoom');
     });
 
@@ -123,12 +121,12 @@ $(document).ready(function() {
 
     socket.on('roomCreated', function(roomId) {
         $('#createRoomRoomId').text(roomId);
-    });
+        $('#createRoomModal').show();
+    });    
 
     // Game room state 
     socket.on('startGame', function(data) {
-        $('#menu').hide();
-        $('#playVsPlayerMenu').hide();
+        $('.menu').hide();
         $('.modal').hide();
 
         $('#gameArea').show();
@@ -136,7 +134,7 @@ $(document).ready(function() {
         updateBoard(data.board);
     });
 
-    socket.on('updateGame', function(data) {
+    socket.on('gameUpdate', function(data) {
         updateGameInfo(data);
         updateBoard(data.board);
     });
@@ -156,7 +154,7 @@ $(document).ready(function() {
 
         $('.modal').hide();
         $('#gameArea').hide();
-        $('#menu').show();
+        $('#mainMenu').show();
     });
 
     // Postgame window
@@ -166,12 +164,7 @@ $(document).ready(function() {
 
     $('#leaveGameButton').click(function() {
         closedGame = true;
-
-        if (!isSpectating) {
-            socket.emit('leaveRoom');
-        } else {
-            socket.emit('stopSpectating');
-        }
+        socket.emit('leaveRoom');
     });
 
     // Closing modal windows
