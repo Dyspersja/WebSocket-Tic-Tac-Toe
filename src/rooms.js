@@ -112,4 +112,14 @@ function getRoom(roomId) {
     return rooms.get(roomId);
 }
 
-module.exports = { initializeRoom, createRoom, joinRoom, leaveRoom, getRoomResponse, getRoom };
+function getAllRooms() {
+    let availableRooms = [];
+    rooms.forEach((room, roomId) => {
+        if (room.player2.socket) {
+            availableRooms.push({ roomId, players: [room.player1.socket.username, room.player2.socket.username] });
+        }
+    });
+    return availableRooms;
+}
+
+module.exports = { initializeRoom, createRoom, joinRoom, leaveRoom, getRoomResponse, getRoom, getAllRooms };

@@ -2,6 +2,7 @@ const { joinQueue, leaveQueue } = require('./queue');
 const { createRoom, joinRoom, leaveRoom } = require('./rooms');
 const { move } = require('./game');
 const { playVsAI } = require('./ai');
+const { spectate, spectateRoom } = require('./spectate');
 
 function setupSocketHandlers(io) {
     io.on('connection', handleSocketConnection);
@@ -22,6 +23,9 @@ function handleSocketConnection(socket) {
     socket.on('move', (cell) => move(socket, cell));
 
     socket.on('playVsAI', (difficulty) => playVsAI(socket, difficulty));
+
+    socket.on('spectate', () => spectate(socket));
+    socket.on('spectateRoom', (roomId) => spectateRoom(socket, roomId));
 
     socket.on('disconnect', () => {
         leaveQueue(socket);

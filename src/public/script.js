@@ -22,6 +22,33 @@ $(document).ready(function() {
         $('#mainMenu').show();
     });
 
+    // Spectate
+    $('#spectateButton').click(function() {
+        socket.emit('spectate');
+    });
+
+    socket.on('availableRooms', function(data) {
+        var roomList = $('#spectateRooms');
+        roomList.empty();
+
+        data.forEach(function(room) {
+            var text = room.players.join(' vs ');
+            var roomItem = $('<div></div>')
+                .text(text)
+                .addClass('roomItem')
+                .attr('data-room-id', room.roomId);
+            
+            roomList.append(roomItem);
+        });
+
+        $('#spectateModal').show();
+        
+        $('.roomItem').click(function() {
+            var roomId = $(this).data('room-id');
+            socket.emit('spectateRoom', roomId);
+        });
+    });
+
     // Starting vs AI games
     $('#playVsAIButton').click(function() {
         $('#aiMenuModal').show();
