@@ -1,6 +1,11 @@
 $(document).ready(function() {
     let socket = io();
 
+    // Error alert
+    socket.on('error', function(data) {
+        alert(data);
+    });
+
     // Selecting username
     $('#loginForm').submit(function(event) {
         event.preventDefault();
@@ -32,6 +37,7 @@ $(document).ready(function() {
         $('#menu').show();
     });
 
+    // Queue
     $('#joinQueueButton').click(function() {
         socket.emit('joinQueue');
     });
@@ -47,6 +53,32 @@ $(document).ready(function() {
     socket.on('leftQueue', function() {
         $('#queueModal').hide();
     });
+
+    // Create / Join room
+    $('#createRoomButton').click(function() {
+        socket.emit('createRoom');
+    });
+
+    $('#createRoomCancelButton').click(function() {
+        $('#createRoomModal').hide();
+        socket.emit('leaveRoom');
+    });
+
+    $('#joinRoomButton').click(function() {
+        $('#joinRoomModal').show();
+    });
+
+    $('#connectToRoomButton').click(function() {
+        roomId = $('#roomIdInput').val();
+        if (roomId) {
+            socket.emit('joinRoom', roomId);
+        }
+    });
+
+    socket.on('roomCreated', function(roomId) {
+        $('#createRoomRoomId').text(roomId);
+        $('#createRoomModal').show();
+    });    
 
     // Closing modal windows
     $(window).click(function(event) {
