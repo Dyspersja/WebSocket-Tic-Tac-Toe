@@ -1,6 +1,7 @@
 $(document).ready(function() {
     let socket = io();
-    let closedGame = false;
+    let preventOpponentLeftAlert = false;
+    let preventRedirectToMainMenu = false;
 
     // Error alert
     socket.on('error', function(data) {
@@ -105,6 +106,10 @@ $(document).ready(function() {
 
     $('#createRoomCancelButton').click(function() {
         $('#createRoomModal').hide();
+
+        preventRedirectToMainMenu = true
+        preventOpponentLeftAlert = true;
+        
         socket.emit('leaveRoom');
     });
 
@@ -146,15 +151,20 @@ $(document).ready(function() {
     });
 
     socket.on('gameClosed', function() {
-        if (!closedGame) {
+        if (!preventOpponentLeftAlert) {
             alert('Opponent left the game');
         } else {
-            closedGame = false;
+            preventOpponentLeftAlert = false;
         }
 
         $('.modal').hide();
         $('#gameArea').hide();
-        $('#mainMenu').show();
+
+        if (!preventRedirectToMainMenu) {
+            $('#mainMenu').show();
+        } else {
+            preventRedirectToMainMenu = false;
+        }
     });
 
     // Postgame window
@@ -163,7 +173,7 @@ $(document).ready(function() {
     });
 
     $('#leaveGameButton').click(function() {
-        closedGame = true;
+        preventOpponentLeftAlert = true;
         socket.emit('leaveRoom');
     });
 
