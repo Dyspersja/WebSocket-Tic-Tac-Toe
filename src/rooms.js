@@ -106,4 +106,4 @@ function leaveRoom(socket) {
     }
 }
 
-module.exports = { createRoom, joinRoom, leaveRoom };
+module.exports = { initializeRoom, createRoom, joinRoom, leaveRoom };

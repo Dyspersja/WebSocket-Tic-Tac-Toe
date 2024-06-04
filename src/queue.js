@@ -1,3 +1,5 @@
+const { initializeRoom, joinRoom } = require('./rooms');
+
 let queue = [];
 
 function joinQueue(socket) {
@@ -22,7 +24,9 @@ function isQueueReady() {
         let player1 = queue.shift();
         let player2 = queue.shift();
 
-        // TODO: Add Room Creation
+        const roomId = initializeRoom();
+        joinRoom(player1, roomId);
+        joinRoom(player2, roomId);
     }
 }
 
