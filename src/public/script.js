@@ -1,5 +1,6 @@
 $(document).ready(function() {
     let socket = io();
+    let closedGame = false;
 
     // Error alert
     socket.on('error', function(data) {
@@ -88,6 +89,39 @@ $(document).ready(function() {
         $('#gameArea').show();
         updateGameInfo(data);
         updateBoard(data.board);
+    });
+
+    socket.on('gameUpdate', function(data) {
+        updateGameInfo(data);
+        updateBoard(data.board);
+    });
+
+    socket.on('gameOver', function(winner) {
+        let message = winner === 'draw' ? 'Game is a draw!' : `Player ${winner} wins!`;
+        $('#gameWinner').text(message);
+        $('#afterGameModal').show();
+    });
+
+    socket.on('gameClosed', function() {
+        if (!closedGame) {
+            alert('Opponent left the game');
+        } else {
+            closedGame = false;
+        }
+
+        $('.modal').hide();
+        $('#gameArea').hide();
+        $('#mainMenu').show();
+    });
+
+    // Postgame window
+    $('#continueGameButton').click(function() {
+        $('#afterGameModal').hide();
+    });
+
+    $('#leaveGameButton').click(function() {
+        closedGame = true;
+        socket.emit('leaveRoom');
     });
 
     // Closing modal windows

@@ -19,6 +19,11 @@ function handleSocketConnection(socket) {
     socket.on('leaveRoom', () => leaveRoom(socket));
 
     socket.on('move', (cell) => move(socket, cell));
+
+    socket.on('disconnect', () => {
+        leaveQueue(socket);
+        leaveRoom(socket);
+    });
 }
 
 module.exports = { setupSocketHandlers };
