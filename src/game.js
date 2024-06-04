@@ -1,6 +1,7 @@
 const { checkBoardState } = require('./board');
 const { getRoomResponse, getRoom } = require('./rooms');
 const { emitGameUpdate } = require('./socketBroadcaster');
+const { makeAIMove } = require('./ai');
 
 function move(socket, cell) {
     let roomId = socket.roomId;
@@ -16,7 +17,12 @@ function move(socket, cell) {
     if (room.board[cell] !== '') return;
 
     makeMove(roomId, room, cell);
-    // TODO: Add AI response move
+    if (room.mode === 'vsAI') {
+        let aiCell = makeAIMove(room, room.player2.socket.difficulty);
+        setTimeout(() => {
+            makeMove(roomId, room, aiCell);
+        }, 500);
+    }
 }
 
 function makeMove(roomId, room, cell) {

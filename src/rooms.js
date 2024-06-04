@@ -62,8 +62,10 @@ function joinRoom(socket, roomId) {
         socket.roomId = roomId;
         room.player1.socket = socket;
     } else if (!room.player2.socket) {
-        socket.join(roomId);
-        socket.roomId = roomId;
+        if(room.mode !== 'vsAI') {
+            socket.join(roomId);
+            socket.roomId = roomId;
+        }
         room.player2.socket = socket;
 
         emitGameStart(roomId, getRoomResponse(room));

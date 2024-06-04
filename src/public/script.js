@@ -27,6 +27,22 @@ $(document).ready(function() {
         $('#aiMenuModal').show();
     });
 
+    $('#easyDifficulty').click(function() {
+        socket.emit('playVsAI', 'easy');        
+    });
+
+    $('#mediumDifficulty').click(function() {
+        socket.emit('playVsAI', 'medium');        
+    });
+
+    $('#hardDifficulty').click(function() {
+        socket.emit('playVsAI', 'hard');        
+    });
+
+    $('#imposibleDifficulty').click(function() {
+        socket.emit('playVsAI', 'imposible');        
+    });
+
     // Starting vs Player game
     $('#playVsPlayerButton').click(function() {
         $('#mainMenu').hide();

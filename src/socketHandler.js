@@ -1,6 +1,7 @@
 const { joinQueue, leaveQueue } = require('./queue');
 const { createRoom, joinRoom, leaveRoom } = require('./rooms');
 const { move } = require('./game');
+const { playVsAI } = require('./ai');
 
 function setupSocketHandlers(io) {
     io.on('connection', handleSocketConnection);
@@ -19,6 +20,8 @@ function handleSocketConnection(socket) {
     socket.on('leaveRoom', () => leaveRoom(socket));
 
     socket.on('move', (cell) => move(socket, cell));
+
+    socket.on('playVsAI', (difficulty) => playVsAI(socket, difficulty));
 
     socket.on('disconnect', () => {
         leaveQueue(socket);
