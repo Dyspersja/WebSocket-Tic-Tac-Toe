@@ -1,3 +1,5 @@
+const { emitGameOver } = require('./socketBroadcaster');
+
 function checkWinner(board) {
     const winningConditions = [
         [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
@@ -19,4 +21,21 @@ function checkDraw(board) {
     return board.every(cell => cell !== '');
 }
 
-module.exports = { checkWinner, checkDraw };
+function checkBoardState(roomId, room) {
+    let winner = checkWinner(room.board);
+    if (winner) {
+        if (room.player1.side === winner) {
+            room.score.player1++;
+        } else {
+            room.score.player2++;
+        }
+        room.board = Array(9).fill('');
+        emitGameOver(roomId, winner);
+    } else if (checkDraw(room.board)) {
+        room.score.draws++;
+        room.board = Array(9).fill('');
+        emitGameOver(roomId, 'draw');
+    }
+}
+
+module.exports = { checkWinner, checkDraw, checkBoardState };
