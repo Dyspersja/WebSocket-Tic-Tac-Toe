@@ -79,18 +79,9 @@ function leaveRoom(socket) {
     if (!room) return;
 
     // If socket belongs to a spectator or one of the players
-    if (socket !== room.player1.socket && 
-        socket !== room.player2.socket) {
+    if (socket === room.player1.socket || 
+        socket === room.player2.socket) {
         
-        socket.leave(roomId);
-        socket.roomId = null;
-
-        const spectatorIndex = room.spectators.findIndex(socket);
-        if (spectatorIndex !== -1) {
-            room.spectators.splice(spectatorIndex, 1);
-        }
-        socket.emit('gameClosed');
-    } else {
         // Tear down the whole room if one of the players left
         emitGameClose(roomId);
         rooms.delete(roomId);
@@ -105,6 +96,15 @@ function leaveRoom(socket) {
             room.player2.socket.leave(roomId);
             room.player2.socket.roomId = null;    
         }
+    } else {
+        socket.leave(roomId);
+        socket.roomId = null;
+
+        const spectatorIndex = room.spectators.indexOf(socket);
+        if (spectatorIndex !== -1) {
+            room.spectators.splice(spectatorIndex, 1);
+        }
+        socket.emit('gameClosed');
     }
 }
 

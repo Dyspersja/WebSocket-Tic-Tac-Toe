@@ -15,6 +15,7 @@ function spectateRoom(socket, roomId) {
     }
 
     socket.join(roomId);
+    socket.roomId = roomId;
     room.spectators.push(socket);
     socket.emit('startGame', getRoomResponse(room));
 }
