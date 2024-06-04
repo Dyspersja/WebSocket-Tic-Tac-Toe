@@ -31,7 +31,23 @@ $(document).ready(function() {
         $('#playVsPlayerMenu').hide();
         $('#menu').show();
     });
+
+    $('#joinQueueButton').click(function() {
+        socket.emit('joinQueue');
+    });
+
+    $('#queueLeaveButton').click(function() {
+        socket.emit('leaveQueue');
+    });
+
+    socket.on('joinedQueue', function() {
+        $('#queueModal').show();
+    });
     
+    socket.on('leftQueue', function() {
+        $('#queueModal').hide();
+    });
+
     // Closing modal windows
     $(window).click(function(event) {
         var modal = $('#aiMenuModal');
